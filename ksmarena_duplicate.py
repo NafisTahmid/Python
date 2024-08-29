@@ -64,42 +64,45 @@ if res.status_code == 200:
     name = 'Phone name'
     # print(media_from_url(src, name))
 
-    phone = phones[0]
+    # phone = phones[0]
+    for phone in phones:
 
+        phone_name = phone.get("name")
+        specification_str = phone.get('specifications')
+        specification = json.loads(specification_str)
+        release_date = phone.get("released_at")
+        chipset = phone.get("chipset")
+        body = phone.get("body")
+        os = phone.get("os")
+        picture = phone.get("picture")
+        # print(specification)
+        title = f"{phone_name} price in Bangladesh"
+        paragraph = f"{phone_name} has been released on {release_date}. It comes with {chipset} chipset. The body of this mobile is {body}"
+    
 
-    phone_name = phone.get("name")
-    specification_str = phone.get('specifications')
-    specification = json.loads(specification_str)
-    release_date = phone.get("released_at")
-    chipset = phone.get("chipset")
-    body = phone.get("body")
-    os = phone.get("os")
-    # print(specification)
-    title = f"{phone_name} price in Bangladesh"
-    paragraph = f"{phone_name} has been released on {release_date}. It comes with {chipset} chipset. The body of this mobile is {body}"
-  
+        first_heading = f'{phone_name} brand data'
+        first_dictionary = {
+            'name':phone_name,
+            'Release date':'released_at',
+            'chipset': chipset,
+            'body':body,
+            'Operating system':os
+        }
 
-    first_heading = f'{phone_name} brand data'
-    first_dictionary = {
-        'name':phone_name,
-        'Release date':'released_at',
-        'chipset': chipset,
-        'body':body,
-        'Operating system':os
-    }
-
-    post_paragraph = wp_paragraph(paragraph)
-    wp_table_one = wp_table_dictionary(first_dictionary)
-    wp_heading_one = wp_heading_2_text(first_heading)
-    wp_table_two = wp_table_dictionary(specification)
-    content = post_paragraph + wp_table_one + wp_heading_one + wp_table_two
-    data = {
-        'title':title,
-        'content':content,
-        'slug':slugify(title),
-        'status':'publish'
-    }
-    url = "https://localhost/PythonWordpress/wp-json/wp/v2/posts"
-    res = post(url, headers = wp_authorization, json = data, verify=False)
-    print(res.status_code)
-   
+        post_paragraph = wp_paragraph(paragraph)
+        image = media_from_url(picture, phone_name)
+        wp_table_one = wp_table_dictionary(first_dictionary)
+        wp_heading_one = wp_heading_2_text(first_heading)
+        wp_table_two = wp_table_dictionary(specification)
+        content = post_paragraph + image + wp_table_one + wp_heading_one + wp_table_two
+        data = {
+            'title':title,
+            'content':content,
+            'slug':slugify(title),
+            'status':'publish',
+            'category':'3'
+        }
+        url = "https://localhost/PythonWordpress/wp-json/wp/v2/posts"
+        res = post(url, headers = wp_authorization, json = data, verify=False)
+        print(res)
+    
